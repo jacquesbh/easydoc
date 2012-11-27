@@ -1,0 +1,11 @@
+{
+    "require": {
+        "jacquesbh/eater": "dev-master"
+    },
+    "autoload": {
+        "psr-0": {
+            "Easydoc": ["lib/", "app/code/"],
+            "" : "app/code/"
+        }
+    }
+}
