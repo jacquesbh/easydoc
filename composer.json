@@ -4,8 +4,7 @@
     },
     "autoload": {
         "psr-0": {
-            "Easydoc": ["lib/", "app/code/"],
-            "" : "app/code/"
+            "": ["lib/", "app/code/core", "app/code/local", "app/code/community"]
         }
     }
 }
