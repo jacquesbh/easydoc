@@ -14,6 +14,7 @@ define('PS', PATH_SEPARATOR);
 define('BP', dirname(dirname(dirname(__FILE__))));
 
 use Easydoc\Core\Model\Config;
+use Easydoc\Http\Request;
 use Easydoc\Exception;
 
 /**
@@ -39,6 +40,14 @@ class App
      * @var \Easydoc\Core\Model\Config
      */
     private static $_config;
+
+    /**
+     * The Request
+     *
+     * @access private
+     * @var \Easydoc\Http\Request
+     */
+    private static $_request;
 
     /**
      * Private constructor : Singleton
@@ -76,19 +85,22 @@ class App
     {
         $app = self::instance();
         $app->_initConfig();
-        $app->_initRouter();
+        $app->_initHttpRequest();
 
         return $app;
     }
 
     /**
-     * Init the routes
+     * Init the request
      *
      * @access protected
      * @return \Easydoc\App
      */
-    protected function _initRouter()
+    protected function _initHttpRequest()
     {
+        self::$_request = new Request;
+        $this->getRequest()
+            ->init();
         return $this;
     }
 
@@ -118,6 +130,18 @@ class App
     }
 
     /**
+     * Retrieve the request
+     *
+     * @access public
+     * @static
+     * @return \Easydoc\Http\Request
+     */
+    static public function getRequest()
+    {
+        return self::$_request;
+    }
+
+    /**
      * Retrieve a specific directory
      *
      * @access public
@@ -127,6 +151,10 @@ class App
     static public function getBaseDir($type = null)
     {
         switch ($type) {
+        case 'app':
+            return BP . '/app';
+        case 'etc':
+            return BP . '/app/etc';
         case 'code':
             return BP . '/app/code';
         case 'lib':
@@ -145,6 +173,29 @@ class App
     public function dispatch()
     {
         throw new Exception('dispatch');
+    }
+
+    /**
+     * Retrieve an URL
+     *
+     * @access public
+     * @static
+     * @return string
+     */
+    static public function getUrl($path, $params = [])
+    {
+        $url = self::getConfig()->getWeb('url_unsecure');
+        $url .= trim($path, '/') . '/';
+
+        if (count($params)) {
+            foreach ($params as $k => $v) {
+                if ($k !== 0) {
+                    $url .= $k . '/' . $v . '/';
+                }
+            }
+        }
+
+        return trim($url, '/');
     }
 
 }

@@ -37,7 +37,26 @@ class Config extends Eater
      */
     public function init()
     {
+        $this->_initMainConfiguration();
         $this->_initModulesConfiguration();
+    }
+
+
+    /**
+     * Load the main configuration
+     *
+     * @access protected
+     * @return \Easydoc\Core\Model\Config
+     */
+    protected function _initMainConfiguration()
+    {
+        $files = glob(App::getBaseDir('etc') . '/*.json');
+   
+        foreach ($files as $file) {
+            $this->merge(new Eater(json_decode(file_get_contents($file), true)));
+        }
+
+        return $this;
     }
 
     /**
@@ -48,7 +67,7 @@ class Config extends Eater
      */
     protected function _initModulesConfiguration()
     {
-        $files = glob($this->getBaseDir('code') . '/*/*/etc/config.json');
+        $files = glob(App::getBaseDir('code') . '/*/*/etc/config.json');
 
         foreach ($files as $file) {
             $this->merge(new Eater(json_decode(file_get_contents($file), true)));
