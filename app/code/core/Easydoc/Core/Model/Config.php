@@ -67,7 +67,7 @@ class Config extends Eater
      */
     protected function _initModulesConfiguration()
     {
-        $files = glob(App::getBaseDir('code') . '/*/*/etc/config.json');
+        $files = glob(App::getBaseDir('code') . '/*/*/*/etc/config.json');
 
         foreach ($files as $file) {
             $this->merge(new Eater(json_decode(file_get_contents($file), true)));
