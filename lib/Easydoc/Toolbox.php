@@ -52,4 +52,5 @@ trait Toolbox
     {
         return App::getUrl($path, $params);
     }
+
 }

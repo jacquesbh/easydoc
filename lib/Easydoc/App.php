@@ -14,7 +14,7 @@ define('PS', PATH_SEPARATOR);
 define('BP', dirname(dirname(dirname(__FILE__))));
 
 use Easydoc\Core\Model\Config;
-use Easydoc\Http\Request;
+use Easydoc\Http;
 use Easydoc\Exception;
 
 /**
@@ -48,6 +48,14 @@ class App
      * @var \Easydoc\Http\Request
      */
     private static $_request;
+
+    /**
+     * The Response
+     *
+     * @access private
+     * @var \Easydoc\Http\Response
+     */
+    private static $_response;
 
     /**
      * Private constructor : Singleton
@@ -98,7 +106,7 @@ class App
      */
     protected function _initHttpRequest()
     {
-        self::$_request = new Request;
+        self::$_request = new Http\Request;
         $this->getRequest()
             ->init();
         return $this;
@@ -139,6 +147,21 @@ class App
     static public function getRequest()
     {
         return self::$_request;
+    }
+
+    /**
+     * Retrieve the response
+     *
+     * @access public
+     * @static
+     * @return \Easydoc\Http\Response
+     */
+    static public function getResponse()
+    {
+        if (is_null(self::$_response)) {
+            self::$_response = new Http\Response;
+        }
+        return self::$_response;
     }
 
     /**
@@ -185,14 +208,18 @@ class App
             $request->setRealModuleName($routes[$request->getModuleName()]);
             $moduleName = $request->getRealModuleName();
         } else {
-            throw new Exception('Route not defined');
+            throw new Exception(sprintf("The route '%s' isn't defined.", $request->getModuleName()));
         }
 
         // Check the controller file
         if (!isset($conf->getModules()[$moduleName])
-            || !is_file($controllerFile = $this->getBaseDir('code') . DS . $conf->getModules()[$moduleName]['pool'] . DS . str_replace('_', DS, $moduleName) . '/controllers/' . $request->getControllerName() . 'Controller.php')
+            || !is_file($controllerFile = $this->getBaseDir('code')
+                                        . DS . $conf->getModules()[$moduleName]['pool']
+                                        . DS . str_replace('_', DS, $moduleName)
+                                        . '/controllers/'
+                                        . $request->getControllerName() . 'Controller.php')
         ) {
-            throw new Exception('Route not defined');
+            throw new Exception(sprintf("The module '%s' isn't declared.", $moduleName));
         }
 
         require_once $controllerFile;
@@ -200,15 +227,11 @@ class App
         $className = str_replace('_', '\\', $moduleName) . '\\' . ucfirst($request->getControllerName()) . 'Controller';
         $controller = new $className;
 
-        // Check the action
-        $action = $request->getActionName() . 'Action';
-        if (!method_exists($controller, $action)) {
-            throw new Exception('Action doesn\'t exists.');
-        }
+        // Dispatch !
+        $controller->dispatch($request->getActionName());
 
-        $controller->$action();
-
-        return $this;
+        // Send the Http Response
+        $this->getResponse()->send();
     }
 
     /**
