@@ -1,2 +1,6 @@
+# Composer
 /composer.lock
 /vendor
+
+# Easydoc
+/app/etc/config.json
