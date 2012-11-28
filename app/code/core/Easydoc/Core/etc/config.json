@@ -1,2 +1,10 @@
 {
+    "modules": {
+        "Easydoc_Core": {
+            "pool": "core"
+        }
+    },
+    "routes": {
+        "core": "Easydoc_Core"
+    }
 }

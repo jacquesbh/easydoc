@@ -34,6 +34,7 @@ class Request extends Eater
 
         // The standard route
         $request = $this->getParts()->getPath();
+
         if (preg_match('`^(/[^/]*)+$`', $request)) {
             if (empty($request)) {
                 $routes = array();
@@ -42,14 +43,17 @@ class Request extends Eater
             }
 
             // The module/controller/action
-            $this->setModuleName(array_shift($routes));
-            $this->setControllerName(array_shift($routes));
-            $this->setActionName(array_shift($routes));
+            $moduleName = array_shift($routes);
+            $this->setModuleName($moduleName ?: 'core');
+            $controllerName = array_shift($routes);
+            $this->setControllerName($controllerName ?: 'index');
+            $actionName = array_shift($routes);
+            $this->setActionName($actionName ?: 'index');
 
             // The params
             if (count($routes)) {
                 while (null !== ($v = array_shift($routes))) {
-                    $request->setParam($v, array_shift($routes));
+                    $this->setData($v, array_shift($routes));
                 }
             }
         }

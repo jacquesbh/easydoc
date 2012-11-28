@@ -172,7 +172,42 @@ class App
      */
     public function dispatch()
     {
-        throw new Exception('dispatch');
+        // The request :)
+        $request = $this->getRequest();
+
+        // The config
+        $conf = $this->getConfig();
+
+        // Check the route
+        $routes = $conf->getRoutes();
+        if (isset($routes[$request->getModuleName()])) {
+            $request->setRealModuleName($routes[$request->getModuleName()]);
+            $moduleName = $request->getRealModuleName();
+        } else {
+            throw new Exception('Route not defined');
+        }
+
+        // Check the controller file
+        if (!isset($conf->getModules()[$moduleName])
+            || !is_file($controllerFile = $this->getBaseDir('code') . DS . $conf->getModules()[$moduleName]['pool'] . DS . str_replace('_', DS, $moduleName) . '/controllers/' . $request->getControllerName() . 'Controller.php')
+        ) {
+            throw new Exception('Route not defined');
+        }
+
+        require_once $controllerFile;
+
+        $className = str_replace('_', '\\', $moduleName) . '\\' . ucfirst($request->getControllerName()) . 'Controller';
+        $controller = new $className;
+
+        // Check the action
+        $action = $request->getActionName() . 'Action';
+        if (!method_exists($controller, $action)) {
+            throw new Exception('Action doesn\'t exists.');
+        }
+
+        $controller->$action();
+
+        return $this;
     }
 
     /**

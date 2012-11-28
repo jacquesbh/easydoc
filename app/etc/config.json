@@ -1,5 +1,7 @@
 {
     "web": {
         "url_unsecure": "http://easydoc.local/"
-    }
+    },
+    "routes": {},
+    "modules": {}
 }
