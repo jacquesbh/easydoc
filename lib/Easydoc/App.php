@@ -144,6 +144,7 @@ class App
     /**
      * Retrieve a specific directory
      *
+     * @param string $type Can be NULL
      * @access public
      * @static
      * @return string
@@ -213,6 +214,8 @@ class App
     /**
      * Retrieve an URL
      *
+     * @param string $path
+     * @param array $params
      * @access public
      * @static
      * @return string
