@@ -48,7 +48,7 @@ trait Toolbox
      * @access public
      * @return string
      */
-    public function getUrl($path, $params = [])
+    public function getUrl($path = null, $params = [])
     {
         return App::getUrl($path, $params);
     }

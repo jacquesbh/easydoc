@@ -243,10 +243,12 @@ class App
      * @static
      * @return string
      */
-    static public function getUrl($path, $params = [])
+    static public function getUrl($path = null, $params = [])
     {
         $url = self::getConfig()->getWeb('url_unsecure');
-        $url .= trim($path, '/') . '/';
+        if ($path) {
+            $url .= trim($path, '/') . '/';
+        }
 
         if (count($params)) {
             foreach ($params as $k => $v) {
@@ -254,9 +256,10 @@ class App
                     $url .= $k . '/' . $v . '/';
                 }
             }
+            $url = trim($url, '/');
         }
 
-        return trim($url, '/');
+        return $url;
     }
 
 }
