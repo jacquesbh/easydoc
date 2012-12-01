@@ -23,6 +23,14 @@ class View extends Eater
     use \Easydoc\Toolbox;
 
     /**
+     * Template to use
+     *
+     * @access protected
+     * @var string
+     */
+    protected $_template = null;
+
+    /**
      * Dispatch this view
      *
      * @access public
@@ -31,11 +39,42 @@ class View extends Eater
     public function dispatch()
     {
         ob_start();
-        echo 'Hello World! (again...)';
+        $this->render();
         $content = ob_get_contents();
         ob_end_clean();
 
         return $content;
     }
+
+    /**
+     * Render the view without buffer
+     *
+     * @access public
+     * @return void
+     */
+    public function render()
+    {
+        if (!is_null($this->_template)) {
+            $file = App::getDesign()->getTemplatesPath() . '/' . $this->_template;
+            if (is_file($file)) {
+                include $file;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Set the template file
+     *
+     * @access public
+     * @return \Easydoc\View
+     */
+    public function setTemplate($templateName = null)
+    {
+        $this->_template = $templateName;
+        return $this;
+    }
+
 
 }

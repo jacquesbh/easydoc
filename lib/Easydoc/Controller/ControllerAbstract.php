@@ -67,20 +67,50 @@ class ControllerAbstract
         // Dispatch it!
         $this->_preDispatch();
         $this->$action();
-        $this->getResponse()->setBody($this->getView()->dispatch());
         $this->_postDispatch();
+    }
+
+    /**
+     * Load the view
+     *
+     * @access public
+     * @render \Easydoc\Controller\ControllerAbstract
+     */
+    public function loadView()
+    {
+        if (is_null($this->_view)) {
+            $this->_view = new View;
+        }
+        return $this;
+    }
+
+    /**
+     * Render the view in response
+     *
+     * @thrown \Easydoc\Exception
+     * @access public
+     * @return \Easydoc\Controller\ControllerAbstract
+     */
+    public function renderView()
+    {
+        if (is_null($this->_view)) {
+            throw new Exception("You need to load the view before render it.");
+        }
+        $this->getResponse()->setBody($this->getView()->dispatch());
+        return $this;
     }
 
     /**
      * Retrieve the view
      *
+     * @thrown \Easydoc\Exception
      * @access public
      * @return \Easydoc\View
      */
     public function getView()
     {
         if (is_null($this->_view)) {
-            $this->_view = new View;
+            throw new Exception("You need to load the view before get it.");
         }
         return $this->_view;
     }

@@ -15,6 +15,7 @@ define('BP', dirname(dirname(dirname(__FILE__))));
 
 use Easydoc\Core\Model\Config;
 use Easydoc\Http;
+use Easydoc\Design;
 use Easydoc\Exception;
 
 /**
@@ -56,6 +57,14 @@ class App
      * @var \Easydoc\Http\Response
      */
     private static $_response;
+
+    /**
+     * The design
+     *
+     * @access private
+     * @var \Easydoc\Design
+     */
+    private static $_design;
 
     /**
      * Private constructor : Singleton
@@ -165,6 +174,21 @@ class App
     }
 
     /**
+     * Retrieve the design
+     *
+     * @access public
+     * @static
+     * @return \Easydoc\Design
+     */
+    static public function getDesign()
+    {
+        if (is_null(self::$_design)) {
+            self::$_design = new Design;
+        }
+        return self::$_design;
+    }
+
+    /**
      * Retrieve a specific directory
      *
      * @param string $type Can be NULL
@@ -175,6 +199,8 @@ class App
     static public function getBaseDir($type = null)
     {
         switch ($type) {
+        case 'design':
+            return BP . '/app/design';
         case 'app':
             return BP . '/app';
         case 'etc':

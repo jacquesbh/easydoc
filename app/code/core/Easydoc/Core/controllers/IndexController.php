@@ -28,7 +28,9 @@ class IndexController extends ControllerAbstract
      */
     public function indexAction()
     {
-        echo 'Hello World!';
+        $this->loadView();
+        $this->getView()->setTemplate('test.phtml');
+        $this->renderView();
     }
 
 }
